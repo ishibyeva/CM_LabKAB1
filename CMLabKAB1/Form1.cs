@@ -559,7 +559,7 @@ namespace CMLabKAB1
                 }
                 
             }
-            Controlofxn(mas,h,i);
+            i=Controlofxn(mas,h,i);
             dataGridView1.RowCount = i;
             form.label11.Text = Convert.ToString(i);
             if (comboBox1.SelectedIndex == 1)
@@ -808,7 +808,7 @@ namespace CMLabKAB1
             form.label17.Text = Convert.ToString(pnt[mih].x);
         }
 
-        void Controlofxn(Point[] mas, double[] h, int k)
+        int Controlofxn(Point[] mas, double[] h, int k)
         {
             double hnew = h[k - 1], x0, u0;
             int iter = k;
@@ -825,7 +825,7 @@ namespace CMLabKAB1
                     u0 = mas[iter - 1].y;
 
                     t1 = metodRK(x0, u0, hnew, iter);
-                    // dataGridView1.Rows[iter].Cells[2].Value = t1.y;
+                    dataGridView1.Rows[iter].Cells[2].Value = t1.y;
 
                     //(x(n+1/2),y(n+1/2))
 
@@ -840,11 +840,11 @@ namespace CMLabKAB1
                     u0 = t12.y;
 
                     t2 = metodRK(x0, u0, hnew * 0.5, iter);
-                    // dataGridView1.Rows[iter].Cells[4].Value = t2.y;
+                     dataGridView1.Rows[iter].Cells[4].Value = t2.y;
                     //... 
-                    // double S = Math.Abs((t2.y - t1.y) / (Math.Pow(2, 4) - 1));
-                    // double olp = S*Math.Pow(2,4);
-                    //  dataGridView1.Rows[iter].Cells[8].Value = olp;
+                    double S = Math.Abs((t2.y - t1.y) / (Math.Pow(2, 4) - 1));
+                    double olp = S*Math.Pow(2,4);
+                     dataGridView1.Rows[iter].Cells[8].Value = olp;
 
                     //Запись данных в таблицу 
                     mas[iter] = t2;
@@ -854,9 +854,10 @@ namespace CMLabKAB1
 
                 }
             }
+            return iter;
         }
 
-        void Controlofxn(Pointforsys[] mas, double[] h, int k)
+        int Controlofxn(Pointforsys[] mas, double[] h, int k)
         {
             double hnew = h[k - 1], x0, u01,u02;
             int iter = k;
@@ -874,7 +875,7 @@ namespace CMLabKAB1
                     u02 = mas[iter - 1].y2;
 
                     t1 = metodRKS(iter, hnew, x0, u01,u02);
-                    // dataGridView1.Rows[iter].Cells[2].Value = t1.y;
+                    dataGridView1.Rows[iter].Cells[2].Value = t1.y;
 
                     //(x(n+1/2),y(n+1/2))
 
@@ -891,11 +892,11 @@ namespace CMLabKAB1
                     u01 = t12.y1;
 
                     t2 = metodRKS(iter, hnew * 0.5, x0, u01, u02);
-                    // dataGridView1.Rows[iter].Cells[4].Value = t2.y;
+                    dataGridView1.Rows[iter].Cells[4].Value = t2.y;
                     //... 
-                    // double S = Math.Abs((t2.y - t1.y) / (Math.Pow(2, 4) - 1));
-                    // double olp = S*Math.Pow(2,4);
-                    //  dataGridView1.Rows[iter].Cells[8].Value = olp;
+                    double S = Math.Abs((t2.y - t1.y) / (Math.Pow(2, 4) - 1));
+                    double olp = S*Math.Pow(2,4);
+                     dataGridView1.Rows[iter].Cells[8].Value = olp;
 
                     //Запись данных в таблицу 
                     mas[iter] = t2;
@@ -904,7 +905,7 @@ namespace CMLabKAB1
 
                 }
             }
-
+            return iter;
         }
 
         void RezOsn2()
@@ -1017,7 +1018,7 @@ namespace CMLabKAB1
                 }
 
             }
-            Controlofxn(mas,h,i);
+            i=Controlofxn(mas,h,i);
             dataGridView1.RowCount = i;
             form.label11.Text = Convert.ToString(i);
             
