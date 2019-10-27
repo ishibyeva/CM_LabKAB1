@@ -65,6 +65,9 @@ namespace CMLabKAB1
             E = double.Parse(textBox2.Text);
             xn = double.Parse(textBox4.Text);
             a = double.Parse(textBox11.Text);
+            b= double.Parse(textBox12.Text);
+            c= double.Parse(textBox13.Text);
+
         }
 
         private void label3_Click(object sender, EventArgs e)
@@ -556,6 +559,7 @@ namespace CMLabKAB1
                 }
                 
             }
+            Controlofxn(mas,h,i);
             dataGridView1.RowCount = i;
             form.label11.Text = Convert.ToString(i);
             if (comboBox1.SelectedIndex == 1)
@@ -804,16 +808,16 @@ namespace CMLabKAB1
             form.label17.Text = Convert.ToString(pnt[mih].x);
         }
 
-        int Controlofxn(Point[] mas, double[] h, int k)
+        void Controlofxn(Point[] mas, double[] h, int k)
         {
-            double hnew = h[k-1], x0,u0;
+            double hnew = h[k - 1], x0, u0;
             int iter = k;
-            while (iter < maxnum && (mas[iter].x <= xn - eboard || mas[iter].x >= xn + eboard))
+            while ((iter < maxnum) && ((mas[iter].x <= xn - eboard) || (mas[iter].x >= xn + eboard)))
             {
                 hnew = hnew * 0.5;
-                mas[iter].x = mas[iter].x + hnew;
+                mas[iter].x = mas[iter - 1].x + hnew;
 
-                if (mas[k].x < xn + eboard)
+                if (mas[iter].x < xn + eboard)
                 {
                     //Добавление точек/точки в список 
                     Point t1, t2, t12;
@@ -821,13 +825,13 @@ namespace CMLabKAB1
                     u0 = mas[iter - 1].y;
 
                     t1 = metodRK(x0, u0, hnew, iter);
-                    dataGridView1.Rows[iter].Cells[2].Value = t1.y;
+                    // dataGridView1.Rows[iter].Cells[2].Value = t1.y;
 
                     //(x(n+1/2),y(n+1/2))
 
                     x0 = mas[iter - 1].x;
                     u0 = mas[iter - 1].y;
-                    t12 = metodRK(x0, u0, hnew / 2.0, iter);
+                    t12 = metodRK(x0, u0, hnew * 0.5, iter);
 
 
                     //(x(n),Y(n))
@@ -835,77 +839,72 @@ namespace CMLabKAB1
                     x0 = t12.x;
                     u0 = t12.y;
 
-                    t2 = metodRK(x0, u0, hnew / 2.0, iter);
-                    dataGridView1.Rows[iter].Cells[4].Value = t2.y;
+                    t2 = metodRK(x0, u0, hnew * 0.5, iter);
+                    // dataGridView1.Rows[iter].Cells[4].Value = t2.y;
                     //... 
-                    double S = Math.Abs((t2.y - t1.y) / (Math.Pow(2, 4) - 1));
-                    double olp = S*Math.Pow(2,4);
-                    dataGridView1.Rows[iter].Cells[8].Value = olp;
+                    // double S = Math.Abs((t2.y - t1.y) / (Math.Pow(2, 4) - 1));
+                    // double olp = S*Math.Pow(2,4);
+                    //  dataGridView1.Rows[iter].Cells[8].Value = olp;
+
                     //Запись данных в таблицу 
                     mas[iter] = t2;
                     h[iter] = hnew;
-                    hnew *= 2.0;
+
                     iter++;
 
                 }
             }
-            return iter;
         }
 
-        int Controlofxn(Pointforsys[] mas, double[] h, int k)
+        void Controlofxn(Pointforsys[] mas, double[] h, int k)
         {
-            double hnew = h[k - 1], prev_x =mas[k-2].x, x=mas[k-1].x, u01,u02;
+            double hnew = h[k - 1], x0, u01,u02;
             int iter = k;
-
-            while (iter < maxnum && (x <= xn - eboard || x >= xn + eboard))
+            while ((iter < maxnum) && ((mas[iter].x <= xn - eboard) || (mas[iter].x >= xn + eboard)))
             {
                 hnew = hnew * 0.5;
-                x = mas[iter].x + hnew;
+                mas[iter].x = mas[iter - 1].x + hnew;
 
-                if (x < xn + eboard)
+                if (mas[iter].x < xn + eboard)
                 {
                     //Добавление точек/точки в список 
-                    Pointforsys t1, t12, t2;
-                    dataGridView1.Rows[iter - 1].Cells[0].Value = iter - 1;
-
-                    //(x(n+1),v(n+1))
+                    Pointforsys t1, t2, t12;
+                    x0 = mas[iter - 1].x;
                     u01 = mas[iter - 1].y1;
                     u02 = mas[iter - 1].y2;
 
-                    t1 = metodRKS(iter, hnew, prev_x, u01, u02);
+                    t1 = metodRKS(iter, hnew, x0, u01,u02);
+                    // dataGridView1.Rows[iter].Cells[2].Value = t1.y;
 
                     //(x(n+1/2),y(n+1/2))
 
-                    t12 = metodRKS(iter, hnew * (0.5), prev_x, u01, u02);
+                    x0 = mas[iter - 1].x;
+                    u01 = mas[iter - 1].y1;
+                    u02 = mas[iter - 1].y2;
+
+                    t12 = metodRKS(iter, hnew*0.5, x0, u01, u02);
 
 
+                    //(x(n),Y(n))
 
-                    //(x(n),Y(n))	
+                    x0 = t12.x;
+                    u01 = t12.y1;
 
-                    t2 = metodRKS(iter, hnew * (0.5), t12.x, t12.y1, t12.y2);
-                    dataGridView1.Rows[iter].Cells[4].Value = t12.y1;
-                    dataGridView1.Rows[iter].Cells[5].Value = t12.y2;
+                    t2 = metodRKS(iter, hnew * 0.5, x0, u01, u02);
+                    // dataGridView1.Rows[iter].Cells[4].Value = t2.y;
+                    //... 
+                    // double S = Math.Abs((t2.y - t1.y) / (Math.Pow(2, 4) - 1));
+                    // double olp = S*Math.Pow(2,4);
+                    //  dataGridView1.Rows[iter].Cells[8].Value = olp;
 
-                    double en1 = t2.y1 - t1.y1;
-                    double en2 = t2.y2 - t1.y2;
-                    
-
-                    double S = Math.Abs(Math.Max(en1, en2));
-
-                    int p = 4;
-                    double e = S * Math.Pow(2, p);
-                    dataGridView1.Rows[iter].Cells[8].Value = e;
                     //Запись данных в таблицу 
                     mas[iter] = t2;
                     h[iter] = hnew;
-                    prev_x = x;
-                    hnew *= 2.0;
                     iter++;
 
                 }
-
             }
-            return iter;
+
         }
 
         void RezOsn2()
@@ -1018,6 +1017,7 @@ namespace CMLabKAB1
                 }
 
             }
+            Controlofxn(mas,h,i);
             dataGridView1.RowCount = i;
             form.label11.Text = Convert.ToString(i);
             
