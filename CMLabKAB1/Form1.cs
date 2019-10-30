@@ -875,7 +875,7 @@ namespace CMLabKAB1
                     u02 = mas[iter - 1].y2;
 
                     t1 = metodRKS(iter, hnew, x0, u01,u02);
-                    dataGridView1.Rows[iter].Cells[2].Value = t1.y;
+                    dataGridView1.Rows[iter].Cells[2].Value = t1.y1;
 
                     //(x(n+1/2),y(n+1/2))
 
@@ -892,9 +892,16 @@ namespace CMLabKAB1
                     u01 = t12.y1;
 
                     t2 = metodRKS(iter, hnew * 0.5, x0, u01, u02);
-                    dataGridView1.Rows[iter].Cells[4].Value = t2.y;
+                    dataGridView1.Rows[iter].Cells[4].Value = t12.y1;
+                    dataGridView1.Rows[iter].Cells[5].Value = t12.y2;
+
                     //... 
-                    double S = Math.Abs((t2.y - t1.y) / (Math.Pow(2, 4) - 1));
+                    double en1 = t2.y1 - t1.y1;
+                    double en2 = t2.y2 - t1.y2;
+                   
+                    double S = Math.Abs(Math.Max(en1, en2));
+
+                    
                     double olp = S*Math.Pow(2,4);
                      dataGridView1.Rows[iter].Cells[8].Value = olp;
 
